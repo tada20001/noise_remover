@@ -13,6 +13,8 @@ expander_bar1.markdown("""
 * 없으면 파일에 동일하게 필드명을 바꿔주세요.(확인 !!)
 """)
 
+st.write(st.config.get_option("server.enableCORS"))
+
 ### input features in the sidebar
 st.sidebar.header('User Input Features')
 
@@ -56,7 +58,7 @@ if input_df is not None:
     title_to_index = dict(zip(input_df['과제명'], input_df.index))
 
     ## 2-2. 추천시스템 함수
-    @st.cache
+    
     def get_recommdataions1(title, rank, cosine_sim=cosine_sim_content):
         idx = title_to_index[title]
         sim_scores = list(enumerate(cosine_sim[idx]))  # 유사도 가져오기
