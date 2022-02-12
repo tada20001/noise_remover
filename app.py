@@ -3,7 +3,7 @@ import pandas as pd
 import base64
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import xlrd
+
 st.write("""
 # 과제간 유사도 분석 : 노이즈 제거용 
 """)
