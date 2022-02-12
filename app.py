@@ -61,7 +61,7 @@ if input_df is not None:
     ### 과제명을 key, 과제 인텍스를 value로 하는 딕셔너리 만들기
     title_to_index = dict(zip(input_df['과제명'], input_df.index))
 
-        ## 추천시스템
+        ## 추천시스템 함수
     @st.cache
     def get_recommdataions1(title, rank, cosine_sim=cosine_sim_content):
         idx = title_to_index[title]
@@ -75,14 +75,13 @@ if input_df is not None:
         
         return input_df, input_df['과제명'].iloc[project_indices]
 
-# https://discuss.streamlit.io/t/how-to-download-file-in-streamlit/1806
-def filedownload(df):
-    csv = df.to_csv(index=False, encoding='utf-8-sig')
-    b64 = base64.b64encode(csv.encode(encoding='utf-8-sig')).decode(encoding='utf-8-sig')
-    href = f'<a href="data:file/csv;base64,{b64}" download="similar_projects.csv">Download CSV File</a>'
-    return href
+    # https://discuss.streamlit.io/t/how-to-download-file-in-streamlit/1806
+    def filedownload(df):
+        csv = df.to_csv(index=False, encoding='utf-8-sig')
+        b64 = base64.b64encode(csv.encode(encoding='utf-8-sig')).decode(encoding='utf-8-sig')
+        href = f'<a href="data:file/csv;base64,{b64}" download="similar_projects.csv">Download CSV File</a>'
+        return href
 
-if input_df is not None:
     df, titles = get_recommdataions1(title, int(rank))
     st.markdown("""
     #### 1. 유사과제 상위 10개 과제명
