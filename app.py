@@ -66,20 +66,14 @@ if input_df is not None:
     def get_recommdataions1(title, rank, cosine_sim=cosine_sim_content):
         idx = title_to_index[title]
         sim_scores = list(enumerate(cosine_sim[idx]))  # 유사도 가져오기
+        input_df['sim_score'] = [sim for index, sim in sim_scores]
+
+        # 상위 랭크 추출
         sim_scores = sorted(sim_scores, key=lambda x:x[1], reverse=True)  # 유사도 정렬
         sim_scores = sim_scores[1:rank + 1]
         project_indices = [idx[0] for idx in sim_scores]
         
-        return input_df['과제명'].iloc[project_indices]
-
-if input_df is not None:
-    titles = get_recommdataions1(title, int(rank))
-    st.markdown("""
-    #### 1. 유사과제 상위 10개 과제명
-    나머지는 파일을 다운로드해서 확인해 보세요!!
-    """)
-    
-    st.write(titles.values[:10])
+        return input_df, input_df['과제명'].iloc[project_indices]
 
 # https://discuss.streamlit.io/t/how-to-download-file-in-streamlit/1806
 def filedownload(df):
@@ -89,12 +83,18 @@ def filedownload(df):
     return href
 
 if input_df is not None:
+    df, titles = get_recommdataions1(title, int(rank))
+    st.markdown("""
+    #### 1. 유사과제 상위 10개 과제명
+    나머지는 파일을 다운로드해서 확인해 보세요!!
+    """)
+    st.write(titles.values[:10])
+
     # 5. Download dataframe
     st.write("""---""")
     st.write("""#### 2. 파일 다운로드""")
-    st.write("선정한 유사과제 정보 다운로드")
-    df_result = titles.reset_index()
-    result_indices = list(df_result['index'])
-    df = input_df.iloc[result_indices]
+    st.write("""유사도 정보를 추가한 파일 다운로드(필드명 : sim_score). 
+    유사도는 1에서 -1까지 범위가 나올 수 있으며, 
+    1에 가까울 수록 유사도가 높고 0 이하이면 성격이 다른 과제라고 기본적으로 해석합니다.""")
     st.markdown(filedownload(df), unsafe_allow_html=True)
     st.write("""***""")
