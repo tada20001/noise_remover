@@ -1,8 +1,10 @@
+import encodings
 import streamlit as st
 import pandas as pd
 import base64
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import io
 
 st.write("""
 # 과제간 유사도 분석 : 노이즈 제거용 
@@ -79,6 +81,14 @@ if input_df is not None:
         href = f'<a href="data:file/csv;base64,{b64}" download="similar_projects.csv">Download CSV File</a>'
         return href
 
+    def filedownload_excel(df):
+        excel = io.BytesIO()
+        excel_file = df.to_excel(excel, encoding='utf-8', index=False, header=True)
+        excel.seek(0)  # reset pointer
+        b64 = base64.b64encode(excel.read()).decode() # some strings
+        linko = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="similar_projects.xlsx">Download excel file</a>'
+        return linko
+
     ## 2-4. 결과 출력
     df, titles = get_recommdataions1(title, int(rank))
     st.markdown("""#### 1. 유사과제 상위 10개 과제명
@@ -91,5 +101,5 @@ if input_df is not None:
     st.write("""유사도 정보를 추가한 파일 다운로드(필드명 : sim_score). 
     유사도는 1에서 -1까지 범위가 나올 수 있으며, 
     1에 가까울 수록 유사도가 높고 0 이하이면 성격이 다른 과제라고 기본적으로 해석합니다.""")
-    st.markdown(filedownload(df), unsafe_allow_html=True)
+    st.markdown(filedownload_excel(df), unsafe_allow_html=True)
     st.write("""***""")
